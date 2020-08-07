@@ -13,7 +13,6 @@ public class AddExamItemActivity extends AppCompatActivity
     // fields - data
 
     // fields - layout
-    private TextInputLayout id_TIL;
     private TextInputLayout categoryNumber_TIL;
     private TextInputLayout problem_TIL;
     private Button addItem_Button;
@@ -38,14 +37,12 @@ public class AddExamItemActivity extends AppCompatActivity
     public void onAddItemButtonClicked()
     {
         // check input data validity
-        if (isNumberValid(id_TIL) & isNumberValid(categoryNumber_TIL) & isProblemValid())
+        if (isNumberValid(categoryNumber_TIL) & isProblemValid())
         {
-            int id = Integer.parseInt(id_TIL.getEditText().getText().toString());
             int categoryNumber = Integer.parseInt(categoryNumber_TIL.getEditText().getText().toString());
             String problem = problem_TIL.getEditText().getText().toString();
 
             Intent intent = new Intent(AddExamItemActivity.this, MainActivity.class);
-            intent.putExtra("id", id);
             intent.putExtra("categoryNumber", categoryNumber);
             intent.putExtra("problem", problem);
 
@@ -66,7 +63,6 @@ public class AddExamItemActivity extends AppCompatActivity
     // methods layout
     public void initializeLayout()
     {
-        id_TIL = findViewById(R.id.idTextInputLayout_AAEI);
         categoryNumber_TIL = findViewById(R.id.categoryNumberTextInputLayout_AAEI);
         problem_TIL = findViewById(R.id.problemTextInputLayout_AAEI);
         addItem_Button = findViewById(R.id.addItemButton_AAEI);

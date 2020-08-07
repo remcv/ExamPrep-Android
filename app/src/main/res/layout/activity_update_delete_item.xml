@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".AddExamItemActivity">
+    tools:context=".DeleteItemActivity">
 
     <ImageView
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
         android:src="@drawable/pencil"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/categoryNumberTextInputLayout_AAEI"
+        android:id="@+id/categoryNumberTextInputLayout_AUDI"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:errorEnabled="true"
@@ -32,7 +32,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/problemTextInputLayout_AAEI"
+        android:id="@+id/problemTextInputLayout_AUDI"
         android:layout_width="match_parent"
         android:paddingLeft="12dp"
         android:paddingRight="12dp"
@@ -46,13 +46,34 @@
             android:hint="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/addItemButton_AAEI"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="Add item"/>
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/saveItemButton_AUDI"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="14dp"
+            android:text="Save"/>
+
+        <Button
+            android:id="@+id/deleteItemButton_AUDI"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="Delete"/>
+
+
+    </LinearLayout>
+
 
 </LinearLayout>

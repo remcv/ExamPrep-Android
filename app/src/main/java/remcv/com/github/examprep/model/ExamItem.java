@@ -1,33 +1,41 @@
 package remcv.com.github.examprep.model;
 
-public class ExamItem
+public class ExamItem implements Comparable<ExamItem>
 {
     // fields
-    private int id;
-    private int categoryNumberFromExamList;
-    private String item;
+    private int categoryNumber;
+    private String problem;
 
     // constructor
-    public ExamItem(int id, int categoryNumberFromExamList, String item)
+    public ExamItem(int categoryNumber, String problem)
     {
-        this.id = id;
-        this.categoryNumberFromExamList = categoryNumberFromExamList;
-        this.item = item;
+        this.categoryNumber = categoryNumber;
+        this.problem = problem;
     }
 
-    // methods
-    public int getId()
+    // methods - getters
+    public int getCategoryNumber()
     {
-        return id;
+        return categoryNumber;
     }
 
-    public int getCategoryNumberFromExamList()
+    public String getProblem()
     {
-        return categoryNumberFromExamList;
+        return problem;
     }
 
-    public String getItem()
+    // methods - interface
+    @Override
+    public int compareTo(ExamItem other)
     {
-        return item;
+        // by category number, than alphabetical
+        if (this.categoryNumber == other.getCategoryNumber())
+        {
+            return this.problem.compareTo(other.getProblem());
+        }
+        else
+        {
+            return this.categoryNumber - other.getCategoryNumber();
+        }
     }
 }

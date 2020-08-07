@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +18,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import remcv.com.github.examprep.controller.DatabaseCrud;
 import remcv.com.github.examprep.controller.DatabaseHandler;
@@ -55,7 +59,7 @@ public class MainActivity extends AppCompatActivity
 
         // initiate layout
         initializeLayout();
-        countdown_TV.setText(String.format("Days left - %s", calculateDaysLeft()));
+        countdown_TV.setText(String.format("Days left - %s", Utils.calculateDaysLeft()));
 
         // ListView adapter
         adapter = new ExamItemAdapter(databaseHandler.getList(), MainActivity.this);
@@ -65,6 +69,21 @@ public class MainActivity extends AppCompatActivity
         addButton.setOnClickListener((v) -> onAddButtonClicked());
         updateButton.setOnClickListener((v) -> onUpdateButtonClicked());
         deleteButton.setOnClickListener((v) -> onDeleteButtonClicked());
+        generateListOfProblems_TB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                if (isChecked)
+                {
+                    onToggleButtonOn();
+                }
+                else
+                {
+                    onToggleButtonOff();
+                }
+            }
+        });
     }
 
     @Override
@@ -101,8 +120,15 @@ public class MainActivity extends AppCompatActivity
     // methods - button events
     public void onAddButtonClicked()
     {
-        Intent addIntent = new Intent(MainActivity.this, AddExamItemActivity.class);
-        startActivityForResult(addIntent, ADD_ITEM_REQUEST_CODE);
+        if (generateListOfProblems_TB.isChecked())
+        {
+            Toast.makeText(this, "Uncheck the toggle button first", Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Intent addIntent = new Intent(MainActivity.this, AddExamItemActivity.class);
+            startActivityForResult(addIntent, ADD_ITEM_REQUEST_CODE);
+        }
     }
 
     public void onUpdateButtonClicked()
@@ -115,6 +141,28 @@ public class MainActivity extends AppCompatActivity
     {
 //        Intent deleteIntent = new Intent(MainActivity.this, DeleteExamItemActivity.class);
 //        startActivityForResult(deleteIntent, DELETE_ITEM_REQUEST_CODE);
+    }
+
+    public void onToggleButtonOn()
+    {
+        List<ExamItem> list = Utils.generateRandomSubjectList(3, databaseHandler.getList());
+
+        if (list == null)
+        {
+            Toast.makeText(this, "Not enough subjects in your list", Toast.LENGTH_SHORT).show();
+            generateListOfProblems_TB.setChecked(false);
+        }
+        else
+        {
+            adapter.setList(list);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    public void onToggleButtonOff()
+    {
+        adapter.setList(databaseHandler.getList());
+        adapter.notifyDataSetChanged();
     }
 
     // methods - data
@@ -138,36 +186,19 @@ public class MainActivity extends AppCompatActivity
 
         // load the database from storage
         databaseHandler.loadDb(sourceFile);
+        Collections.sort(databaseHandler.getList());
     }
 
     public void onAddItemReturn(Intent data)
     {
-        int id = data.getIntExtra("id", 0);
+        int categoryNumber = data.getIntExtra("categoryNumber", 0);
+        String problem = data.getStringExtra("problem");
 
-        // check index
-        int index = Utils.getIndexFromId(id, databaseHandler.getList());
+        ExamItem newExamItem = new ExamItem(categoryNumber, problem);
+        databaseHandler.getList().add(newExamItem);
 
-        if (index == -1) // id from input was not found in list
-        {
-            int categoryNumber = data.getIntExtra("categoryNumber", 0);
-            String problem = data.getStringExtra("problem");
-
-            ExamItem newExamItem = new ExamItem(id, categoryNumber, problem);
-            databaseHandler.getList().add(newExamItem);
-
-            adapter.notifyDataSetChanged();
-            Toast.makeText(this, "Exam item added", Toast.LENGTH_SHORT).show();
-        }
-        else
-        {
-            Toast.makeText(this, "ID already in list", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public String calculateDaysLeft()
-    {
-        long daysLeft =  ChronoUnit.DAYS.between(LocalDate.now(), LocalDate.of(2020,9,24));
-        return String.valueOf(daysLeft);
+        adapter.notifyDataSetChanged();
+        Toast.makeText(this, "Exam item added", Toast.LENGTH_SHORT).show();
     }
 
     // methods layout

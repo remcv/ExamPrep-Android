@@ -52,16 +52,20 @@ public class ExamItemAdapter extends BaseAdapter
         oneExamItemView = inflater.inflate(R.layout.exam_item, parent, false);
 
         // initialize layout
-        TextView id_TV = oneExamItemView.findViewById(R.id.idTextView_EI);
         TextView categoryNumber_TV = oneExamItemView.findViewById(R.id.categoryNumberTextView_EI);
         TextView problem_TV = oneExamItemView.findViewById(R.id.problemTextView_EI);
 
         // put data in view
         ExamItem examItem = list.get(position);
-        id_TV.setText(String.valueOf(examItem.getId()));
-        categoryNumber_TV.setText(String.valueOf(examItem.getCategoryNumberFromExamList()));
-        problem_TV.setText(examItem.getItem());
+        categoryNumber_TV.setText(String.valueOf(examItem.getCategoryNumber()));
+        problem_TV.setText(examItem.getProblem());
 
         return oneExamItemView;
+    }
+
+    // methods - setters
+    public void setList(List<ExamItem> list)
+    {
+        this.list = list;
     }
 }

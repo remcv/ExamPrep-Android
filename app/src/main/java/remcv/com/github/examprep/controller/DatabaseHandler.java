@@ -30,61 +30,28 @@ public class DatabaseHandler implements DatabaseCrud<ExamItem>
     @Override
     public boolean add(ExamItem item)
     {
-        if (searchForId(item.getId()) != -1)
-        {
-            return false;
-        }
-        else
-        {
-            return examItemsList.add(item);
-        }
+        return examItemsList.add(item);
     }
 
     @Override
     public ExamItem read(int id)
     {
-        int itemIndex = searchForId(id);
-
-        if (itemIndex != -1)
-        {
-            return examItemsList.get(itemIndex);
-        }
-        else
-        {
-            return null;
-        }
+        // TODO
+        return null;
     }
 
     @Override
     public boolean update(ExamItem item)
     {
-        int itemIndex = searchForId(item.getId());
-
-        if (itemIndex != -1)
-        {
-            examItemsList.set(itemIndex, item);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        // TODO
+        return false;
     }
 
     @Override
     public boolean delete(int id)
     {
-        int itemIndex = searchForId(id);
-
-        if (itemIndex != -1)
-        {
-            examItemsList.remove(itemIndex);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        // TODO
+        return false;
     }
 
     @Override
@@ -101,12 +68,11 @@ public class DatabaseHandler implements DatabaseCrud<ExamItem>
 
             while((s = br.readLine()) != null)
             {
-                oneRow = s.split(",", 3);
-                id = Integer.parseInt(oneRow[0]);
-                categoryNumber = Integer.parseInt(oneRow[1]);
-                problem = oneRow[2];
+                oneRow = s.split(",", 2);
+                categoryNumber = Integer.parseInt(oneRow[0]);
+                problem = oneRow[1];
 
-                examItemsList.add(new ExamItem(id, categoryNumber, problem));
+                examItemsList.add(new ExamItem(categoryNumber, problem));
             }
         }
         catch (IOException e)
@@ -124,11 +90,9 @@ public class DatabaseHandler implements DatabaseCrud<ExamItem>
 
             for (ExamItem item : examItemsList)
             {
-                oneItem.append(item.getId());
+                oneItem.append(item.getCategoryNumber());
                 oneItem.append(",");
-                oneItem.append(item.getCategoryNumberFromExamList());
-                oneItem.append(",");
-                oneItem.append(item.getItem());
+                oneItem.append(item.getProblem());
 
                 bw.write(oneItem.toString());
                 bw.newLine();
@@ -154,22 +118,5 @@ public class DatabaseHandler implements DatabaseCrud<ExamItem>
     public String getDatabasePath()
     {
         return FILE_PATH;
-    }
-
-    // methods - other
-    private int searchForId(int id)
-    {
-        int indexOfItem = -1;
-
-        for (ExamItem item : examItemsList)
-        {
-            if (item.getId() == id)
-            {
-                indexOfItem = examItemsList.indexOf(item);
-                break;
-            }
-        }
-
-        return indexOfItem;
     }
 }
