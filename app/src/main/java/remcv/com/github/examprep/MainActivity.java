@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
@@ -44,8 +46,6 @@ public class MainActivity extends AppCompatActivity
     private ListView problems_LV;
     private ToggleButton generateListOfProblems_TB;
     private Button addButton;
-    private Button updateButton;
-    private Button deleteButton;
 
     // methods - lifecycle
     @Override
@@ -67,8 +67,6 @@ public class MainActivity extends AppCompatActivity
 
         // handle button events
         addButton.setOnClickListener((v) -> onAddButtonClicked());
-        updateButton.setOnClickListener((v) -> onUpdateButtonClicked());
-        deleteButton.setOnClickListener((v) -> onDeleteButtonClicked());
         generateListOfProblems_TB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
@@ -81,6 +79,24 @@ public class MainActivity extends AppCompatActivity
                 else
                 {
                     onToggleButtonOff();
+                }
+            }
+        });
+        problems_LV.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                if (!generateListOfProblems_TB.isChecked())
+                {
+                    ExamItem examItem = databaseHandler.getList().get(position);
+
+                    Intent intent = new Intent(MainActivity.this, DeleteItemActivity.class);
+                    intent.putExtra("categoryNumber", examItem.getCategoryNumber());
+                    intent.putExtra("problem", examItem.getProblem());
+
+                    int requestCode = 1;
+                    startActivityForResult(intent, requestCode);
                 }
             }
         });
@@ -208,7 +224,5 @@ public class MainActivity extends AppCompatActivity
         problems_LV = findViewById(R.id.problemsListView_AM);
         generateListOfProblems_TB = findViewById(R.id.generateListOfProblemsToggleButton_AM);
         addButton = findViewById(R.id.addButton_AM);
-        updateButton = findViewById(R.id.updateButton_AM);
-        deleteButton = findViewById(R.id.deleteButton_AM);
     }
 }

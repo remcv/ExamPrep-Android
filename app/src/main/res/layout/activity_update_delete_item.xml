@@ -60,7 +60,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:layout_marginRight="14dp"
-            android:text="Save"/>
+            android:text="Update"/>
 
         <Button
             android:id="@+id/deleteItemButton_AUDI"

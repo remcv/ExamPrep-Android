@@ -67,6 +67,7 @@
             android:id="@+id/generateListOfProblemsToggleButton_AM"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:layout_marginRight="16dp"
             android:layout_height="wrap_content"
             android:text="Random" />
 
@@ -74,22 +75,9 @@
             android:id="@+id/addButton_AM"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:layout_marginLeft="16dp"
             android:layout_height="wrap_content"
             android:text="Add"/>
-
-        <Button
-            android:id="@+id/updateButton_AM"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Update"/>
-
-        <Button
-            android:id="@+id/deleteButton_AM"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Delete"/>
 
     </LinearLayout>
 
