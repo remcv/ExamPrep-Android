@@ -47,31 +47,27 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
+        android:id="@+id/buttons_LL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:padding="10dp"
+        android:orientation="horizontal">
 
         <Button
-            android:id="@+id/saveItemButton_AUDI"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
+            android:id="@+id/updateItemButton_AUDI"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginRight="16dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginRight="14dp"
-            android:text="Update"/>
+            android:text="Update" />
 
         <Button
             android:id="@+id/deleteItemButton_AUDI"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
             android:text="Delete"/>
-
 
     </LinearLayout>
 

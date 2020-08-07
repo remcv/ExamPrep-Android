@@ -48,5 +48,7 @@ public class DeleteItemActivity extends AppCompatActivity
     {
         categoryNumber_til = findViewById(R.id.categoryNumberTextInputLayout_AUDI);
         problem_til = findViewById(R.id.problemTextInputLayout_AUDI);
+        updateButton = findViewById(R.id.updateItemButton_AUDI);
+        deleteButton = findViewById(R.id.deleteItemButton_AUDI);
     }
 }

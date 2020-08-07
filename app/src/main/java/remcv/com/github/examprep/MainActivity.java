@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity
                     intent.putExtra("categoryNumber", examItem.getCategoryNumber());
                     intent.putExtra("problem", examItem.getProblem());
 
-                    int requestCode = 1;
+                    int requestCode = 2;
                     startActivityForResult(intent, requestCode);
                 }
             }
@@ -115,6 +115,11 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
+
+        /*
+        1 - add item
+        2 - update OR delete
+         */
 
         if (resultCode == RESULT_OK)
         {
