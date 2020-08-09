@@ -8,7 +8,7 @@ import android.widget.Button;
 
 import com.google.android.material.textfield.TextInputLayout;
 
-public class DeleteItemActivity extends AppCompatActivity
+public class UpdateDeleteItemActivity extends AppCompatActivity
 {
     // fields - data
 

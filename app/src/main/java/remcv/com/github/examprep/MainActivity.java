@@ -17,10 +17,6 @@ import android.widget.ToggleButton;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -67,21 +63,7 @@ public class MainActivity extends AppCompatActivity
 
         // handle button events
         addButton.setOnClickListener((v) -> onAddButtonClicked());
-        generateListOfProblems_TB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-            {
-                if (isChecked)
-                {
-                    onToggleButtonOn();
-                }
-                else
-                {
-                    onToggleButtonOff();
-                }
-            }
-        });
+        generateListOfProblems_TB.setOnCheckedChangeListener((buttonView, isChecked) -> onToggleButtonStateChanged(isChecked));
         problems_LV.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -91,7 +73,7 @@ public class MainActivity extends AppCompatActivity
                 {
                     ExamItem examItem = databaseHandler.getList().get(position);
 
-                    Intent intent = new Intent(MainActivity.this, DeleteItemActivity.class);
+                    Intent intent = new Intent(MainActivity.this, UpdateDeleteItemActivity.class);
                     intent.putExtra("categoryNumber", examItem.getCategoryNumber());
                     intent.putExtra("problem", examItem.getProblem());
 
@@ -132,10 +114,12 @@ public class MainActivity extends AppCompatActivity
                     //
                     break;
                 case DELETE_ITEM_REQUEST_CODE:
-                    //
+//                    onDeleteItem();
                     break;
             }
         }
+
+        Collections.sort(databaseHandler.getList());
     }
 
     // methods - button events
@@ -186,6 +170,18 @@ public class MainActivity extends AppCompatActivity
         adapter.notifyDataSetChanged();
     }
 
+    public void onToggleButtonStateChanged(boolean isChecked)
+    {
+        if (isChecked)
+        {
+            onToggleButtonOn();
+        }
+        else
+        {
+            onToggleButtonOff();
+        }
+    }
+
     // methods - data
     public void initializeData()
     {
@@ -220,6 +216,12 @@ public class MainActivity extends AppCompatActivity
 
         adapter.notifyDataSetChanged();
         Toast.makeText(this, "Exam item added", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onDeleteItem(int index)
+    {
+        databaseHandler.getList().remove(index);
+        Toast.makeText(this, "Exam item deleted", Toast.LENGTH_SHORT).show();
     }
 
     // methods layout
