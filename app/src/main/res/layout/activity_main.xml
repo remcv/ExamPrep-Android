@@ -26,17 +26,17 @@
             android:id="@+id/countdownTextView_AM"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="This is a test 45"
-            android:textSize="20sp"
+            android:background="@drawable/circle"
             android:padding="4dp"
+            android:text="45\ndays"
+            android:textColor="@color/colorAccent"
+            android:textSize="20sp"
+            android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintHorizontal_bias="0.1"
-            android:textStyle="bold"
-            android:background="#74FFF176"
-            android:textColor="@color/colorAccent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -45,7 +45,7 @@
         android:id="@+id/problemsListView_AM"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="7"/>
+        android:layout_weight="6"/>
 
     <LinearLayout
         android:id="@+id/settings_LL"

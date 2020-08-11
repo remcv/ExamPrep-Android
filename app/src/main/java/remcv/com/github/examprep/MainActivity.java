@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity
 
         // initiate layout
         initializeLayout();
-        countdown_TV.setText(String.format("Days left - %s", Utils.calculateDaysLeft()));
+        countdown_TV.setText(String.format("%s\ndays", Utils.calculateDaysLeft()));
 
         // ListView adapter
         adapter = new ExamItemAdapter(databaseHandler.getList(), MainActivity.this);
