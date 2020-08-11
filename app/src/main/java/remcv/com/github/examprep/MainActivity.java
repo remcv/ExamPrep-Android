@@ -6,10 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,8 +31,7 @@ public class MainActivity extends AppCompatActivity
     private ExamItemAdapter adapter;
     private static final String TAG = "ExamPrep";
     private static final int ADD_ITEM_REQUEST_CODE = 1;
-    private static final int UPDATE_ITEM_REQUEST_CODE = 2;
-    private static final int DELETE_ITEM_REQUEST_CODE = 3;
+    private static final int UPDATE_DELETE_ITEM_REQUEST_CODE = 2;
 
     // fields - layout
     private TextView countdown_TV;
@@ -61,27 +57,10 @@ public class MainActivity extends AppCompatActivity
         adapter = new ExamItemAdapter(databaseHandler.getList(), MainActivity.this);
         problems_LV.setAdapter(adapter);
 
-        // handle button events
+        // handle events
         addButton.setOnClickListener((v) -> onAddButtonClicked());
         generateListOfProblems_TB.setOnCheckedChangeListener((buttonView, isChecked) -> onToggleButtonStateChanged(isChecked));
-        problems_LV.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                if (!generateListOfProblems_TB.isChecked())
-                {
-                    ExamItem examItem = databaseHandler.getList().get(position);
-
-                    Intent intent = new Intent(MainActivity.this, UpdateDeleteItemActivity.class);
-                    intent.putExtra("categoryNumber", examItem.getCategoryNumber());
-                    intent.putExtra("problem", examItem.getProblem());
-
-                    int requestCode = 2;
-                    startActivityForResult(intent, requestCode);
-                }
-            }
-        });
+        problems_LV.setOnItemClickListener((parent, view, position, id) -> onListViewItemClicked(position));
     }
 
     @Override
@@ -110,11 +89,8 @@ public class MainActivity extends AppCompatActivity
                 case ADD_ITEM_REQUEST_CODE:
                     onAddItemReturn(data);
                     break;
-                case UPDATE_ITEM_REQUEST_CODE:
-                    //
-                    break;
-                case DELETE_ITEM_REQUEST_CODE:
-//                    onDeleteItem();
+                case UPDATE_DELETE_ITEM_REQUEST_CODE:
+                    onUpdateDeleteReturn(data);
                     break;
             }
         }
@@ -122,7 +98,25 @@ public class MainActivity extends AppCompatActivity
         Collections.sort(databaseHandler.getList());
     }
 
-    // methods - button events
+    // methods - handle events
+    public void onListViewItemClicked(int position)
+    {
+        // run code only if the toggle button is off
+        if (!generateListOfProblems_TB.isChecked())
+        {
+            ExamItem examItem = databaseHandler.getList().get(position);
+
+            Intent intent = new Intent(MainActivity.this, UpdateDeleteItemActivity.class);
+            intent.putExtra("categoryNumber", examItem.getCategoryNumber());
+            intent.putExtra("problem", examItem.getProblem());
+            intent.putExtra("index", position);
+
+            int requestCode = 2;
+            startActivityForResult(intent, requestCode);
+        }
+    }
+
+
     public void onAddButtonClicked()
     {
         if (generateListOfProblems_TB.isChecked())
@@ -134,18 +128,6 @@ public class MainActivity extends AppCompatActivity
             Intent addIntent = new Intent(MainActivity.this, AddExamItemActivity.class);
             startActivityForResult(addIntent, ADD_ITEM_REQUEST_CODE);
         }
-    }
-
-    public void onUpdateButtonClicked()
-    {
-//        Intent updateIntent = new Intent(MainActivity.this, UpdateExamItemActivity.class);
-//        startActivityForResult(updateIntent, UPDATE_ITEM_REQUEST_CODE);
-    }
-
-    public void onDeleteButtonClicked()
-    {
-//        Intent deleteIntent = new Intent(MainActivity.this, DeleteExamItemActivity.class);
-//        startActivityForResult(deleteIntent, DELETE_ITEM_REQUEST_CODE);
     }
 
     public void onToggleButtonOn()
@@ -216,6 +198,36 @@ public class MainActivity extends AppCompatActivity
 
         adapter.notifyDataSetChanged();
         Toast.makeText(this, "Exam item added", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onUpdateDeleteReturn(Intent data)
+    {
+        String buttonName = data.getStringExtra("buttonName");
+        int index = data.getIntExtra("index", 0);
+        Log.d(TAG, "onUpdateDeleteReturn: " + index);
+
+        if (buttonName.equals("deleteButton"))
+        {
+            onDeleteReturn(index);
+        }
+        else
+        {
+            onUpdateReturn();
+        }
+
+        // notify adapter of changes
+        adapter.notifyDataSetChanged();
+    }
+
+    public void onDeleteReturn(int index)
+    {
+        databaseHandler.getList().remove(index);
+        Toast.makeText(MainActivity.this, "Item deleted", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onUpdateReturn()
+    {
+        // TODO onUpdateReturn()
     }
 
     public void onDeleteItem(int index)

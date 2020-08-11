@@ -11,6 +11,7 @@ import com.google.android.material.textfield.TextInputLayout;
 public class UpdateDeleteItemActivity extends AppCompatActivity
 {
     // fields - data
+    private int indexOfItemInList;
 
     // fields - layout
     private TextInputLayout categoryNumber_til;
@@ -29,6 +30,24 @@ public class UpdateDeleteItemActivity extends AppCompatActivity
 
         // initialize data
         initializeData();
+
+        // handle events
+        deleteButton.setOnClickListener(v -> onDeleteButtonClicked());
+    }
+
+    // methods - handle events
+    public void onDeleteButtonClicked()
+    {
+        // create intent
+        Intent intent = new Intent(UpdateDeleteItemActivity.this, MainActivity.class);
+        intent.putExtra("index", indexOfItemInList);
+        intent.putExtra("buttonName", "deleteButton");
+
+        // set the result code
+        setResult(RESULT_OK, intent);
+
+        // close activity
+        finish();
     }
 
     // methods - data
@@ -38,6 +57,7 @@ public class UpdateDeleteItemActivity extends AppCompatActivity
 
         int categoryNumber = intent.getIntExtra("categoryNumber", 0);
         String problem = intent.getStringExtra("problem");
+        indexOfItemInList = intent.getIntExtra("index", 0);
 
         categoryNumber_til.getEditText().setText(String.valueOf(categoryNumber));
         problem_til.getEditText().setText(problem);
