@@ -1,5 +1,7 @@
 package remcv.com.github.examprep.utils;
 
+import com.google.android.material.textfield.TextInputLayout;
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -64,5 +66,48 @@ public class Utils
         }
 
         return listToReturn;
+    }
+
+    // input validation methods
+    public static boolean isNumberValid(TextInputLayout til)
+    {
+        String idString = til.getEditText().getText().toString();
+
+        // check if field is empty
+        if (idString.trim().isEmpty())
+        {
+            til.setError("Empty fields are not allowed");
+            return false;
+        }
+        else
+        {
+            try
+            {
+                Integer.parseInt(idString);
+                til.setError(null);
+                return true;
+            }
+            catch (NumberFormatException e)
+            {
+                til.setError("Invalid number");
+                return false;
+            }
+        }
+    }
+
+    public static boolean isStringInputValid(TextInputLayout til)
+    {
+        String problem = til.getEditText().getText().toString();
+
+        if (problem.trim().isEmpty())
+        {
+            til.setError("Empty fields are not allowed");
+            return false;
+        }
+        else
+        {
+            til.setError(null);
+            return true;
+        }
     }
 }

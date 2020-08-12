@@ -20,10 +20,11 @@ import java.util.List;
 import remcv.com.github.examprep.controller.DatabaseCrud;
 import remcv.com.github.examprep.controller.DatabaseHandler;
 import remcv.com.github.examprep.model.ExamItem;
+import remcv.com.github.examprep.utils.TableConstants;
 import remcv.com.github.examprep.utils.Utils;
 import remcv.com.github.examprep.view.ExamItemAdapter;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements TableConstants
 {
     // fields - data
     private File sourceFile;
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity
 
         // initiate layout
         initializeLayout();
-        countdown_TV.setText(String.format("%s\ndays", Utils.calculateDaysLeft()));
+        countdown_TV.setText(String.valueOf(Utils.calculateDaysLeft()));
 
         // ListView adapter
         adapter = new ExamItemAdapter(databaseHandler.getList(), MainActivity.this);
@@ -107,9 +108,9 @@ public class MainActivity extends AppCompatActivity
             ExamItem examItem = databaseHandler.getList().get(position);
 
             Intent intent = new Intent(MainActivity.this, UpdateDeleteItemActivity.class);
-            intent.putExtra("categoryNumber", examItem.getCategoryNumber());
-            intent.putExtra("problem", examItem.getProblem());
-            intent.putExtra("index", position);
+            intent.putExtra(TableConstants.CATEGORY_NUMBER, examItem.getCategoryNumber());
+            intent.putExtra(TableConstants.PROBLEM, examItem.getProblem());
+            intent.putExtra(TableConstants.INDEX, position);
 
             int requestCode = 2;
             startActivityForResult(intent, requestCode);
@@ -202,17 +203,17 @@ public class MainActivity extends AppCompatActivity
 
     public void onUpdateDeleteReturn(Intent data)
     {
-        String buttonName = data.getStringExtra("buttonName");
-        int index = data.getIntExtra("index", 0);
-        Log.d(TAG, "onUpdateDeleteReturn: " + index);
+        // get metadata
+        String buttonName = data.getStringExtra(TableConstants.BUTTON_NAME);
+        int index = data.getIntExtra(TableConstants.INDEX, 0);
 
         if (buttonName.equals("deleteButton"))
         {
             onDeleteReturn(index);
         }
-        else
+        else // buttonName.equals("updateButton")
         {
-            onUpdateReturn();
+            onUpdateReturn(index, data);
         }
 
         // notify adapter of changes
@@ -225,9 +226,14 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(MainActivity.this, "Item deleted", Toast.LENGTH_SHORT).show();
     }
 
-    public void onUpdateReturn()
+    public void onUpdateReturn(int index, Intent data)
     {
-        // TODO onUpdateReturn()
+        // gather data
+        int categoryNumber = data.getIntExtra(TableConstants.CATEGORY_NUMBER, -1);
+        String problem = data.getStringExtra(TableConstants.PROBLEM);
+
+        // create ExamItem and update it in list
+        databaseHandler.getList().set(index, new ExamItem(categoryNumber, problem));
     }
 
     public void onDeleteItem(int index)

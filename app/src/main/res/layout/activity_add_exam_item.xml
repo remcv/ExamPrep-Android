@@ -42,17 +42,17 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textImeMultiLine"
+            android:inputType="textMultiLine"
             android:hint="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/addItemButton_AAEI"
         android:layout_gravity="center"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="32dp"
         android:text="Add item"/>
 
 </LinearLayout>

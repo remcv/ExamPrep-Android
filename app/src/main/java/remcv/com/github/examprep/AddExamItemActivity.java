@@ -8,6 +8,8 @@ import android.widget.Button;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import remcv.com.github.examprep.utils.Utils;
+
 public class AddExamItemActivity extends AppCompatActivity
 {
     // fields - data
@@ -37,7 +39,7 @@ public class AddExamItemActivity extends AppCompatActivity
     public void onAddItemButtonClicked()
     {
         // check input data validity
-        if (isNumberValid(categoryNumber_TIL) & isProblemValid())
+        if (Utils.isNumberValid(categoryNumber_TIL) & Utils.isStringInputValid(problem_TIL))
         {
             int categoryNumber = Integer.parseInt(categoryNumber_TIL.getEditText().getText().toString());
             String problem = problem_TIL.getEditText().getText().toString();
@@ -66,48 +68,5 @@ public class AddExamItemActivity extends AppCompatActivity
         categoryNumber_TIL = findViewById(R.id.categoryNumberTextInputLayout_AAEI);
         problem_TIL = findViewById(R.id.problemTextInputLayout_AAEI);
         addItem_Button = findViewById(R.id.addItemButton_AAEI);
-    }
-
-    // methods - validation
-    private boolean isNumberValid(TextInputLayout til)
-    {
-        String idString = til.getEditText().getText().toString();
-
-        // check if field is empty
-        if (idString.trim().isEmpty())
-        {
-            til.setError("Empty fields are not allowed");
-            return false;
-        }
-        else
-        {
-            try
-            {
-                Integer.parseInt(idString);
-                til.setError(null);
-                return true;
-            }
-            catch (NumberFormatException e)
-            {
-                til.setError("Invalid number");
-                return false;
-            }
-        }
-    }
-
-    private boolean isProblemValid()
-    {
-        String problem = problem_TIL.getEditText().getText().toString();
-
-        if (problem.trim().isEmpty())
-        {
-            problem_TIL.setError("Empty fields are not allowed");
-            return false;
-        }
-        else
-        {
-            problem_TIL.setError(null);
-            return true;
-        }
     }
 }

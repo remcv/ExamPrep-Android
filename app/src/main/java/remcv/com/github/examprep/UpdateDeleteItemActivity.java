@@ -8,7 +8,10 @@ import android.widget.Button;
 
 import com.google.android.material.textfield.TextInputLayout;
 
-public class UpdateDeleteItemActivity extends AppCompatActivity
+import remcv.com.github.examprep.utils.TableConstants;
+import remcv.com.github.examprep.utils.Utils;
+
+public class UpdateDeleteItemActivity extends AppCompatActivity implements TableConstants
 {
     // fields - data
     private int indexOfItemInList;
@@ -33,6 +36,7 @@ public class UpdateDeleteItemActivity extends AppCompatActivity
 
         // handle events
         deleteButton.setOnClickListener(v -> onDeleteButtonClicked());
+        updateButton.setOnClickListener(v -> onUpdateButtonClicked());
     }
 
     // methods - handle events
@@ -40,8 +44,8 @@ public class UpdateDeleteItemActivity extends AppCompatActivity
     {
         // create intent
         Intent intent = new Intent(UpdateDeleteItemActivity.this, MainActivity.class);
-        intent.putExtra("index", indexOfItemInList);
-        intent.putExtra("buttonName", "deleteButton");
+        intent.putExtra(TableConstants.INDEX, indexOfItemInList);
+        intent.putExtra(TableConstants.BUTTON_NAME, "deleteButton");
 
         // set the result code
         setResult(RESULT_OK, intent);
@@ -50,14 +54,37 @@ public class UpdateDeleteItemActivity extends AppCompatActivity
         finish();
     }
 
+    public void onUpdateButtonClicked()
+    {
+        // validate user input
+        if (Utils.isNumberValid(categoryNumber_til) & Utils.isStringInputValid(problem_til))
+        {
+            // gather data
+            int categoryNumber = Integer.parseInt(categoryNumber_til.getEditText().getText().toString());
+            String problem = problem_til.getEditText().getText().toString();
+
+            Intent intent = new Intent(UpdateDeleteItemActivity.this, MainActivity.class);
+            intent.putExtra(TableConstants.CATEGORY_NUMBER, categoryNumber);
+            intent.putExtra(TableConstants.PROBLEM, problem);
+            intent.putExtra(TableConstants.INDEX, indexOfItemInList);
+            intent.putExtra(TableConstants.BUTTON_NAME, "updateButton");
+
+            // set result to pass to MainActivity
+            setResult(RESULT_OK, intent);
+
+            // finish current activity without starting a new MainActivity
+            finish();
+        }
+    }
+
     // methods - data
     public void initializeData()
     {
         Intent intent = getIntent();
 
-        int categoryNumber = intent.getIntExtra("categoryNumber", 0);
-        String problem = intent.getStringExtra("problem");
-        indexOfItemInList = intent.getIntExtra("index", 0);
+        int categoryNumber = intent.getIntExtra(TableConstants.CATEGORY_NUMBER, 0);
+        String problem = intent.getStringExtra(TableConstants.PROBLEM);
+        indexOfItemInList = intent.getIntExtra(TableConstants.INDEX, 0);
 
         categoryNumber_til.getEditText().setText(String.valueOf(categoryNumber));
         problem_til.getEditText().setText(problem);
