@@ -4,20 +4,25 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.CheckBox;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import remcv.com.github.examprep.utils.TableConstants;
 import remcv.com.github.examprep.utils.Utils;
 
 public class AddExamItemActivity extends AppCompatActivity
 {
     // fields - data
+    public static final String TAG = "ExamPrep";
 
     // fields - layout
     private TextInputLayout categoryNumber_TIL;
     private TextInputLayout problem_TIL;
     private Button addItem_Button;
+    private CheckBox subjectIsSolved_CB;
 
     // methods - lifecycle
     @Override
@@ -43,10 +48,14 @@ public class AddExamItemActivity extends AppCompatActivity
         {
             int categoryNumber = Integer.parseInt(categoryNumber_TIL.getEditText().getText().toString());
             String problem = problem_TIL.getEditText().getText().toString();
+            boolean isDone = subjectIsSolved_CB.isChecked();
+
+            Log.d(TAG, "onAddItemButtonClicked: isDone before - " + isDone);
 
             Intent intent = new Intent(AddExamItemActivity.this, MainActivity.class);
-            intent.putExtra("categoryNumber", categoryNumber);
-            intent.putExtra("problem", problem);
+            intent.putExtra(TableConstants.CATEGORY_NUMBER, categoryNumber);
+            intent.putExtra(TableConstants.PROBLEM, problem);
+            intent.putExtra(TableConstants.IS_DONE, isDone);
 
             // set result to pass to MainActivity
             setResult(RESULT_OK, intent);
@@ -68,5 +77,6 @@ public class AddExamItemActivity extends AppCompatActivity
         categoryNumber_TIL = findViewById(R.id.categoryNumberTextInputLayout_AAEI);
         problem_TIL = findViewById(R.id.problemTextInputLayout_AAEI);
         addItem_Button = findViewById(R.id.addItemButton_AAEI);
+        subjectIsSolved_CB = findViewById(R.id.subjectSolvedCheckBox_AAEI);
     }
 }

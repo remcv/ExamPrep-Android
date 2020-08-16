@@ -59,20 +59,24 @@ public class DatabaseHandler implements DatabaseCrud<ExamItem>
     {
         try (BufferedReader br = new BufferedReader(new FileReader(databaseFile)))
         {
-            int id;
             int categoryNumber;
             String problem;
+            boolean isDone;
 
             String s;
             String[] oneRow;
 
             while((s = br.readLine()) != null)
             {
-                oneRow = s.split(",", 2);
+                oneRow = s.split(",", 3);
                 categoryNumber = Integer.parseInt(oneRow[0]);
                 problem = oneRow[1];
+                isDone = Boolean.parseBoolean(oneRow[2]);
 
-                examItemsList.add(new ExamItem(categoryNumber, problem));
+                ExamItem item = new ExamItem(categoryNumber, problem, isDone);
+                Log.d(TAG, "loadDb() item from csv " + item.toString());
+
+                examItemsList.add(item);
             }
         }
         catch (IOException e)
@@ -93,8 +97,11 @@ public class DatabaseHandler implements DatabaseCrud<ExamItem>
                 oneItem.append(item.getCategoryNumber());
                 oneItem.append(",");
                 oneItem.append(item.getProblem());
+                oneItem.append(",");
+                oneItem.append(item.getIsDone());
 
                 bw.write(oneItem.toString());
+                Log.d(TAG, "saveDb() item " + item.toString());
                 bw.newLine();
                 bw.flush();
 

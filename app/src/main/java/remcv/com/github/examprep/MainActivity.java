@@ -191,10 +191,11 @@ public class MainActivity extends AppCompatActivity implements TableConstants
 
     public void onAddItemReturn(Intent data)
     {
-        int categoryNumber = data.getIntExtra("categoryNumber", 0);
-        String problem = data.getStringExtra("problem");
+        int categoryNumber = data.getIntExtra(TableConstants.CATEGORY_NUMBER, 0);
+        String problem = data.getStringExtra(TableConstants.PROBLEM);
+        boolean isDone = data.getBooleanExtra(TableConstants.IS_DONE, false);
 
-        ExamItem newExamItem = new ExamItem(categoryNumber, problem);
+        ExamItem newExamItem = new ExamItem(categoryNumber, problem, isDone);
         databaseHandler.getList().add(newExamItem);
 
         adapter.notifyDataSetChanged();
@@ -231,9 +232,10 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         // gather data
         int categoryNumber = data.getIntExtra(TableConstants.CATEGORY_NUMBER, -1);
         String problem = data.getStringExtra(TableConstants.PROBLEM);
+        boolean isDone = data.getBooleanExtra(TableConstants.IS_DONE, false);
 
         // create ExamItem and update it in list
-        databaseHandler.getList().set(index, new ExamItem(categoryNumber, problem));
+        databaseHandler.getList().set(index, new ExamItem(categoryNumber, problem, isDone));
     }
 
     public void onDeleteItem(int index)

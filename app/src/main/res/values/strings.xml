@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ExamPrep</string>
+    <string name="solved_status">solved</string>
+    <string name="subject_is_solved">subject is solved</string>
 </resources>
