@@ -1,6 +1,10 @@
 package remcv.com.github.examprep.controller;
 
+import android.app.Activity;
 import android.util.Log;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -19,10 +23,12 @@ public class DatabaseHandler implements DatabaseCrud<ExamItem>
     private static final String FILE_PATH = "database.csv";
     private static final String TAG = "ExamPrep";
     private List<ExamItem> examItemsList;
+    private Activity mActivity;
 
     // constructor
-    public DatabaseHandler()
+    public DatabaseHandler(Activity activity)
     {
+        mActivity = activity;
         examItemsList = new ArrayList<ExamItem>();
     }
 
@@ -74,14 +80,13 @@ public class DatabaseHandler implements DatabaseCrud<ExamItem>
                 isDone = Boolean.parseBoolean(oneRow[2]);
 
                 ExamItem item = new ExamItem(categoryNumber, problem, isDone);
-                Log.d(TAG, "loadDb() item from csv " + item.toString());
-
                 examItemsList.add(item);
             }
         }
         catch (IOException e)
         {
             Log.e(TAG, "loadDb() exception thrown " + e.toString());
+            Toast.makeText(mActivity.getApplicationContext(), "Load failed ...", Toast.LENGTH_SHORT).show();
         }
     }
 

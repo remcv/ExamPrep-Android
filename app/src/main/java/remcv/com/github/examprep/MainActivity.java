@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -12,8 +13,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,12 +38,14 @@ public class MainActivity extends AppCompatActivity implements TableConstants
     private static final String TAG = "ExamPrep";
     private static final int ADD_ITEM_REQUEST_CODE = 1;
     private static final int UPDATE_DELETE_ITEM_REQUEST_CODE = 2;
+    private static final int UPLOAD_CSV_REQUEST_CODE = 3;
 
     // fields - layout
     private TextView countdown_TV;
     private ListView problems_LV;
     private ToggleButton generateListOfProblems_TB;
     private Button addButton;
+    private Button uploadButton;
 
     // methods - lifecycle
     @Override
@@ -63,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         addButton.setOnClickListener((v) -> onAddButtonClicked());
         generateListOfProblems_TB.setOnCheckedChangeListener((buttonView, isChecked) -> onToggleButtonStateChanged(isChecked));
         problems_LV.setOnItemClickListener((parent, view, position, id) -> onListViewItemClicked(position));
+        uploadButton.setOnClickListener(v -> onUploadButtonClicked());
     }
 
     @Override
@@ -82,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         /*
         1 - add item
         2 - update OR delete
+        3 - upload database from csv file
          */
 
         if (resultCode == RESULT_OK)
@@ -94,10 +102,14 @@ public class MainActivity extends AppCompatActivity implements TableConstants
                 case UPDATE_DELETE_ITEM_REQUEST_CODE:
                     onUpdateDeleteReturn(data);
                     break;
+                case UPLOAD_CSV_REQUEST_CODE:
+                    onUploadReturn(data);
+                    break;
             }
         }
 
         Collections.sort(databaseHandler.getList());
+        adapter.notifyDataSetChanged();
     }
 
     // methods - handle events
@@ -172,11 +184,21 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         }
     }
 
+    public void onUploadButtonClicked()
+    {
+        // create Intent to open an external csv file
+        Intent getCsvIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        getCsvIntent.addCategory(Intent.CATEGORY_OPENABLE);
+        getCsvIntent.setType("text/comma-separated-values");
+
+        startActivityForResult(getCsvIntent, UPLOAD_CSV_REQUEST_CODE);
+    }
+
     // methods - data
     public void initializeData()
     {
         // instantiate a DatabaseCrud implementation
-        databaseHandler = new DatabaseHandler();
+        databaseHandler = new DatabaseHandler(MainActivity.this);
 
         // instantiate the database File object by accessing the Android device app storage
         sourceFile = new File(getApplicationContext().getFilesDir(), databaseHandler.getDatabasePath());
@@ -205,7 +227,6 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         ExamItem newExamItem = new ExamItem(categoryNumber, problem, isDone);
         databaseHandler.getList().add(newExamItem);
 
-        adapter.notifyDataSetChanged();
         Toast.makeText(this, "Exam item added", Toast.LENGTH_SHORT).show();
     }
 
@@ -223,9 +244,6 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         {
             onUpdateReturn(index, data);
         }
-
-        // notify adapter of changes
-        adapter.notifyDataSetChanged();
     }
 
     public void onDeleteReturn(int index)
@@ -251,6 +269,43 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         Toast.makeText(this, "Exam item deleted", Toast.LENGTH_SHORT).show();
     }
 
+    public void onUploadReturn(Intent data)
+    {
+        Uri csvUri = data.getData();
+        InputStream inputStream = null;
+
+        try
+        {
+            inputStream = getContentResolver().openInputStream(csvUri);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+            // if no exception was thrown until here, then clear the old list
+            databaseHandler.getList().clear();
+
+            String line;
+            String[] lineArray;
+
+            while ((line = reader.readLine()) != null)
+            {
+                lineArray = line.split(",", 3);
+                int categoryNumber = Integer.parseInt(lineArray[0]);
+                String problem = lineArray[1];
+                boolean isDone = Boolean.parseBoolean(lineArray[2]);
+
+                ExamItem item = new ExamItem(categoryNumber, problem, isDone);
+                databaseHandler.getList().add(item);
+            }
+
+            reader.close();
+            inputStream.close();
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, "onUploadReturn: exception " + e.getMessage());
+            Toast.makeText(this, "File loading failed", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     // methods layout
     public void initializeLayout()
     {
@@ -258,5 +313,6 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         problems_LV = findViewById(R.id.problemsListView_AM);
         generateListOfProblems_TB = findViewById(R.id.generateListOfProblemsToggleButton_AM);
         addButton = findViewById(R.id.addButton_AM);
+        uploadButton = findViewById(R.id.uploadButton_AM);
     }
 }
