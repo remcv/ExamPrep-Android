@@ -22,11 +22,20 @@ public class Utils
     {
         // setup
         int listSize = list.size();
+        long numberOfCateg = list.stream()
+                .map(examItem -> Integer.valueOf(examItem.getCategoryNumber()))
+                .distinct()
+                .count();
+
         ArrayList<Integer> indexesOfTakenSubjects = new ArrayList<>();
         ArrayList<Integer> categoriesPicked = new ArrayList<>();
 
         // check if numberOfSubjects is greater than the subjects from the list
         if (numberOfSubjects > listSize)
+        {
+            return null;
+        }
+        else if (numberOfSubjects > (int) numberOfCateg)
         {
             return null;
         }

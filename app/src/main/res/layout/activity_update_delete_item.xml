@@ -13,8 +13,18 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:scaleType="centerCrop"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="12dp"
         android:src="@drawable/pencil"/>
+
+    <CheckBox
+        android:id="@+id/subjectSolvedCheckBox_AUDI"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="8dp"
+        android:textSize="16sp"
+        android:text="@string/subject_is_solved"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/categoryNumberTextInputLayout_AUDI"

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.CheckBox;
 
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -21,6 +22,7 @@ public class UpdateDeleteItemActivity extends AppCompatActivity implements Table
     private TextInputLayout problem_til;
     private Button updateButton;
     private Button deleteButton;
+    private CheckBox subjectIsSolved_CB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -62,10 +64,13 @@ public class UpdateDeleteItemActivity extends AppCompatActivity implements Table
             // gather data
             int categoryNumber = Integer.parseInt(categoryNumber_til.getEditText().getText().toString());
             String problem = problem_til.getEditText().getText().toString();
+            boolean isDone = subjectIsSolved_CB.isChecked();
 
+            // make Intent and put the data in extras
             Intent intent = new Intent(UpdateDeleteItemActivity.this, MainActivity.class);
             intent.putExtra(TableConstants.CATEGORY_NUMBER, categoryNumber);
             intent.putExtra(TableConstants.PROBLEM, problem);
+            intent.putExtra(TableConstants.IS_DONE, isDone);
             intent.putExtra(TableConstants.INDEX, indexOfItemInList);
             intent.putExtra(TableConstants.BUTTON_NAME, "updateButton");
 
@@ -84,10 +89,12 @@ public class UpdateDeleteItemActivity extends AppCompatActivity implements Table
 
         int categoryNumber = intent.getIntExtra(TableConstants.CATEGORY_NUMBER, 0);
         String problem = intent.getStringExtra(TableConstants.PROBLEM);
+        boolean isDone = intent.getBooleanExtra(TableConstants.IS_DONE, false);
         indexOfItemInList = intent.getIntExtra(TableConstants.INDEX, 0);
 
         categoryNumber_til.getEditText().setText(String.valueOf(categoryNumber));
         problem_til.getEditText().setText(problem);
+        subjectIsSolved_CB.setChecked(isDone);
     }
 
     // methods - layout
@@ -97,5 +104,6 @@ public class UpdateDeleteItemActivity extends AppCompatActivity implements Table
         problem_til = findViewById(R.id.problemTextInputLayout_AUDI);
         updateButton = findViewById(R.id.updateItemButton_AUDI);
         deleteButton = findViewById(R.id.deleteItemButton_AUDI);
+        subjectIsSolved_CB = findViewById(R.id.subjectSolvedCheckBox_AUDI);
     }
 }

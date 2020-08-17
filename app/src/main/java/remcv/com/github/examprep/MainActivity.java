@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import remcv.com.github.examprep.controller.DatabaseCrud;
 import remcv.com.github.examprep.controller.DatabaseHandler;
@@ -110,13 +111,13 @@ public class MainActivity extends AppCompatActivity implements TableConstants
             Intent intent = new Intent(MainActivity.this, UpdateDeleteItemActivity.class);
             intent.putExtra(TableConstants.CATEGORY_NUMBER, examItem.getCategoryNumber());
             intent.putExtra(TableConstants.PROBLEM, examItem.getProblem());
+            intent.putExtra(TableConstants.IS_DONE, examItem.getIsDone());
             intent.putExtra(TableConstants.INDEX, position);
 
             int requestCode = 2;
             startActivityForResult(intent, requestCode);
         }
     }
-
 
     public void onAddButtonClicked()
     {
@@ -133,11 +134,16 @@ public class MainActivity extends AppCompatActivity implements TableConstants
 
     public void onToggleButtonOn()
     {
-        List<ExamItem> list = Utils.generateRandomSubjectList(3, databaseHandler.getList());
+        List<ExamItem> list = databaseHandler.getList().stream()
+                .filter(examItem -> !examItem.getIsDone())
+                .collect(Collectors.toList());
+        Log.d(TAG, "onToggleButtonOn: list from stream is " + list);
+
+        list = Utils.generateRandomSubjectList(3, list);
 
         if (list == null)
         {
-            Toast.makeText(this, "Not enough subjects in your list", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Not enough subjects or categories in your list", Toast.LENGTH_SHORT).show();
             generateListOfProblems_TB.setChecked(false);
         }
         else
