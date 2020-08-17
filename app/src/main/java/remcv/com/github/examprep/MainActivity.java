@@ -153,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         }
     }
 
+
     public void onToggleButtonOff()
     {
         adapter.setList(databaseHandler.getList());
