@@ -38,14 +38,14 @@ public class MainActivity extends AppCompatActivity implements TableConstants
     private static final String TAG = "ExamPrep";
     private static final int ADD_ITEM_REQUEST_CODE = 1;
     private static final int UPDATE_DELETE_ITEM_REQUEST_CODE = 2;
-    private static final int UPLOAD_CSV_REQUEST_CODE = 3;
+    private static final int UPLOAD_TSV_REQUEST_CODE = 3;
 
     // fields - layout
     private TextView countdown_TV;
     private ListView problems_LV;
     private ToggleButton generateListOfProblems_TB;
     private Button addButton;
-    private Button uploadButton;
+    private Button importButton;
 
     // methods - lifecycle
     @Override
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         addButton.setOnClickListener((v) -> onAddButtonClicked());
         generateListOfProblems_TB.setOnCheckedChangeListener((buttonView, isChecked) -> onToggleButtonStateChanged(isChecked));
         problems_LV.setOnItemClickListener((parent, view, position, id) -> onListViewItemClicked(position));
-        uploadButton.setOnClickListener(v -> onUploadButtonClicked());
+        importButton.setOnClickListener(v -> onUploadButtonClicked());
     }
 
     @Override
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         /*
         1 - add item
         2 - update OR delete
-        3 - upload database from csv file
+        3 - import database from tsv file
          */
 
         if (resultCode == RESULT_OK)
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements TableConstants
                 case UPDATE_DELETE_ITEM_REQUEST_CODE:
                     onUpdateDeleteReturn(data);
                     break;
-                case UPLOAD_CSV_REQUEST_CODE:
+                case UPLOAD_TSV_REQUEST_CODE:
                     onUploadReturn(data);
                     break;
             }
@@ -189,9 +189,9 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         // create Intent to open an external csv file
         Intent getCsvIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         getCsvIntent.addCategory(Intent.CATEGORY_OPENABLE);
-        getCsvIntent.setType("text/comma-separated-values");
+        getCsvIntent.setType("text/tab-separated-values");
 
-        startActivityForResult(getCsvIntent, UPLOAD_CSV_REQUEST_CODE);
+        startActivityForResult(getCsvIntent, UPLOAD_TSV_REQUEST_CODE);
     }
 
     // methods - data
@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements TableConstants
 
             while ((line = reader.readLine()) != null)
             {
-                lineArray = line.split(",", 3);
+                lineArray = line.split("\t", 3);
                 int categoryNumber = Integer.parseInt(lineArray[0]);
                 String problem = lineArray[1];
                 boolean isDone = Boolean.parseBoolean(lineArray[2]);
@@ -313,6 +313,6 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         problems_LV = findViewById(R.id.problemsListView_AM);
         generateListOfProblems_TB = findViewById(R.id.generateListOfProblemsToggleButton_AM);
         addButton = findViewById(R.id.addButton_AM);
-        uploadButton = findViewById(R.id.uploadButton_AM);
+        importButton = findViewById(R.id.uploadButton_AM);
     }
 }
