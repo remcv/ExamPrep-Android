@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="remcv.com.github.examprep">
-    
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -12,14 +12,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".UpdateDeleteItemActivity"
-            android:parentActivityName=".MainActivity"
-            android:label="Change item"/>
+        <activity android:name=".TestSubjectsActivity"
+            android:label="Test yourself"
+            android:parentActivityName=".MainActivity"/>
+
+        <activity
+            android:name=".UpdateDeleteItemActivity"
+            android:label="Change item"
+            android:parentActivityName=".MainActivity" />
 
         <activity
             android:name=".AddExamItemActivity"
             android:label="Add exam item"
             android:parentActivityName=".MainActivity" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

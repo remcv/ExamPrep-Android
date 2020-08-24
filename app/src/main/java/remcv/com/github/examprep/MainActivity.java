@@ -1,23 +1,33 @@
 package remcv.com.github.examprep;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.google.gson.Gson;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +37,7 @@ import remcv.com.github.examprep.controller.DatabaseHandler;
 import remcv.com.github.examprep.model.ExamItem;
 import remcv.com.github.examprep.utils.TableConstants;
 import remcv.com.github.examprep.utils.Utils;
+import remcv.com.github.examprep.view.DialogNumberOfQuestions;
 import remcv.com.github.examprep.view.ExamItemAdapter;
 
 public class MainActivity extends AppCompatActivity implements TableConstants
@@ -35,6 +46,10 @@ public class MainActivity extends AppCompatActivity implements TableConstants
     private File sourceFile;
     private DatabaseCrud<ExamItem> databaseHandler;
     private ExamItemAdapter adapter;
+    private int numberOfSubjectsToTest;
+    private LocalDate examDate;
+
+    // fields - static final
     private static final String TAG = "ExamPrep";
     private static final int ADD_ITEM_REQUEST_CODE = 1;
     private static final int UPDATE_DELETE_ITEM_REQUEST_CODE = 2;
@@ -43,9 +58,6 @@ public class MainActivity extends AppCompatActivity implements TableConstants
     // fields - layout
     private TextView countdown_TV;
     private ListView problems_LV;
-    private ToggleButton generateListOfProblems_TB;
-    private Button addButton;
-    private Button importButton;
 
     // methods - lifecycle
     @Override
@@ -59,17 +71,14 @@ public class MainActivity extends AppCompatActivity implements TableConstants
 
         // initiate layout
         initializeLayout();
-        countdown_TV.setText(String.valueOf(Utils.calculateDaysLeft()));
+        countdown_TV.setText(Utils.calculateDaysLeft(LocalDate.of(2020, Month.SEPTEMBER, 23)));
 
         // ListView adapter
         adapter = new ExamItemAdapter(databaseHandler.getList(), MainActivity.this);
         problems_LV.setAdapter(adapter);
 
         // handle events
-        addButton.setOnClickListener((v) -> onAddButtonClicked());
-        generateListOfProblems_TB.setOnCheckedChangeListener((buttonView, isChecked) -> onToggleButtonStateChanged(isChecked));
         problems_LV.setOnItemClickListener((parent, view, position, id) -> onListViewItemClicked(position));
-        importButton.setOnClickListener(v -> onUploadButtonClicked());
     }
 
     @Override
@@ -115,76 +124,75 @@ public class MainActivity extends AppCompatActivity implements TableConstants
     // methods - handle events
     public void onListViewItemClicked(int position)
     {
-        // run code only if the toggle button is off
-        if (!generateListOfProblems_TB.isChecked())
+        ExamItem examItem = databaseHandler.getList().get(position);
+
+        Intent intent = new Intent(MainActivity.this, UpdateDeleteItemActivity.class);
+        intent.putExtra(TableConstants.CATEGORY_NUMBER, examItem.getCategoryNumber());
+        intent.putExtra(TableConstants.PROBLEM, examItem.getProblem());
+        intent.putExtra(TableConstants.IS_DONE, examItem.getIsDone());
+        intent.putExtra(TableConstants.INDEX, position);
+
+        int requestCode = 2;
+        startActivityForResult(intent, requestCode);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
+    {
+        switch (item.getItemId())
         {
-            ExamItem examItem = databaseHandler.getList().get(position);
-
-            Intent intent = new Intent(MainActivity.this, UpdateDeleteItemActivity.class);
-            intent.putExtra(TableConstants.CATEGORY_NUMBER, examItem.getCategoryNumber());
-            intent.putExtra(TableConstants.PROBLEM, examItem.getProblem());
-            intent.putExtra(TableConstants.IS_DONE, examItem.getIsDone());
-            intent.putExtra(TableConstants.INDEX, position);
-
-            int requestCode = 2;
-            startActivityForResult(intent, requestCode);
+            case R.id.settingsMenu_itemAdd:
+                onAddButtonClicked();
+                break;
+            case R.id.settingsMenu_itemGenerateRandomList:
+                onGenerateRandomListOfSubjectsClicked();
+                break;
+            case R.id.settingsMenu_itemChangeExamDate:
+                // TODO onChangeExamDateClicked();
+                break;
+            case R.id.settingsMenu_itemSetNoSubjectsInTest:
+                createAlertDialogNumberOfQuestions();
+                break;
+            case R.id.settingsMenu_itemImport:
+                onImportButtonClicked();
+                break;
         }
+
+        return true;
     }
 
     public void onAddButtonClicked()
     {
-        if (generateListOfProblems_TB.isChecked())
-        {
-            Toast.makeText(this, "Uncheck the toggle button first", Toast.LENGTH_SHORT).show();
-        }
-        else
-        {
-            Intent addIntent = new Intent(MainActivity.this, AddExamItemActivity.class);
-            startActivityForResult(addIntent, ADD_ITEM_REQUEST_CODE);
-        }
+        Intent addIntent = new Intent(MainActivity.this, AddExamItemActivity.class);
+        startActivityForResult(addIntent, ADD_ITEM_REQUEST_CODE);
     }
 
-    public void onToggleButtonOn()
+    public void onGenerateRandomListOfSubjectsClicked()
     {
         List<ExamItem> list = databaseHandler.getList().stream()
                 .filter(examItem -> !examItem.getIsDone())
                 .collect(Collectors.toList());
-        Log.d(TAG, "onToggleButtonOn: list from stream is " + list);
 
-        list = Utils.generateRandomSubjectList(3, list);
+        list = Utils.generateRandomSubjectList(numberOfSubjectsToTest, list);
 
         if (list == null)
         {
             Toast.makeText(this, "Not enough subjects or categories in your list", Toast.LENGTH_SHORT).show();
-            generateListOfProblems_TB.setChecked(false);
         }
         else
         {
-            adapter.setList(list);
-            adapter.notifyDataSetChanged();
+            // send the list to TestSubjectsActivity
+            Gson gson = new Gson();
+            String listJson = gson.toJson(list);
+
+            Intent toTestSubjectsActivityIntent = new Intent(MainActivity.this, TestSubjectsActivity.class);
+            toTestSubjectsActivityIntent.putExtra(TableConstants.RANDOM_LIST, listJson);
+
+            startActivity(toTestSubjectsActivityIntent);
         }
     }
 
-
-    public void onToggleButtonOff()
-    {
-        adapter.setList(databaseHandler.getList());
-        adapter.notifyDataSetChanged();
-    }
-
-    public void onToggleButtonStateChanged(boolean isChecked)
-    {
-        if (isChecked)
-        {
-            onToggleButtonOn();
-        }
-        else
-        {
-            onToggleButtonOff();
-        }
-    }
-
-    public void onUploadButtonClicked()
+    public void onImportButtonClicked()
     {
         // create Intent to open an external csv file
         Intent getCsvIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -216,6 +224,9 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         // load the database from storage
         databaseHandler.loadDb(sourceFile);
         Collections.sort(databaseHandler.getList());
+
+        // set the default number of subjects
+        numberOfSubjectsToTest = 5;
     }
 
     public void onAddItemReturn(Intent data)
@@ -311,8 +322,21 @@ public class MainActivity extends AppCompatActivity implements TableConstants
     {
         countdown_TV = findViewById(R.id.countdownTextView_AM);
         problems_LV = findViewById(R.id.problemsListView_AM);
-        generateListOfProblems_TB = findViewById(R.id.generateListOfProblemsToggleButton_AM);
-        addButton = findViewById(R.id.addButton_AM);
-        importButton = findViewById(R.id.uploadButton_AM);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.settings_menu, menu);
+        return true;
+    }
+
+    // methods - alert dialogues
+    public void createAlertDialogNumberOfQuestions()
+    {
+        DialogNumberOfQuestions dialog = new DialogNumberOfQuestions();
+        dialog.show(getSupportFragmentManager(), "DialogNumberOfQuestions");
+    }
+
 }

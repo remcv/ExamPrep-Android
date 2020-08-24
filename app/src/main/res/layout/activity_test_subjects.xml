@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity" >
+    tools:context=".TestSubjectsActivity" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/mountains"
+            android:src="@drawable/classroom"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,10 +36,10 @@
             android:gravity="center">
 
             <TextView
-                android:id="@+id/countdownTextView_AM"
+                android:id="@+id/minutesTextView_ATS"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="45"
+                tools:text="90"
                 android:textStyle="bold"
                 android:textColor="@color/colorAccent"
                 android:textSize="25sp"
@@ -48,7 +48,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="days left"
+                android:text="min"
                 android:textSize="12sp"
                 android:textColor="@android:color/black"
                 android:gravity="center"/>
@@ -91,15 +91,14 @@
             android:layout_weight="1"
             android:textAlignment="center"
             android:textSize="16sp"
-            android:textColor="@android:color/primary_text_dark"
-            android:text="S" />
+            android:textColor="@android:color/primary_text_dark" />
 
     </LinearLayout>
 
     <ListView
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:id="@+id/problemsListView_AM"
+        android:id="@+id/problemsListView_ATS"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="6"/>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/settingsMenu_itemAdd"
+        android:title="Add item"
+        android:icon="@drawable/ic_baseline_add_24"
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/settingsMenu_itemGenerateRandomList"
+        android:title="Test me!"
+        android:icon="@drawable/ic_baseline_notes_24"
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/settingsMenu_itemChangeExamDate"
+        android:title="Change exam date"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/settingsMenu_itemSetNoSubjectsInTest"
+        android:title="Number of questions"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/settingsMenu_itemImport"
+        android:title="Import data"
+        app:showAsAction="never"/>
+
+</menu>

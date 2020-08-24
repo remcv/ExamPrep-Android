@@ -12,10 +12,19 @@ import remcv.com.github.examprep.model.ExamItem;
 
 public class Utils
 {
-    public static String calculateDaysLeft()
+    // fields
+    public static final int MINUTES_PER_SUBJECT = 18;
+
+    // methods
+    public static String calculateDaysLeft(LocalDate examDate)
     {
-        long daysLeft =  ChronoUnit.DAYS.between(LocalDate.now(), LocalDate.of(2020,9,24));
+        long daysLeft =  ChronoUnit.DAYS.between(LocalDate.now(), examDate);
         return String.valueOf(daysLeft);
+    }
+
+    public static String calculateMinutes(int numberOfSubjects)
+    {
+        return String.valueOf(numberOfSubjects * MINUTES_PER_SUBJECT);
     }
 
     public static List<ExamItem> generateRandomSubjectList(int numberOfSubjects, List<ExamItem> list)
