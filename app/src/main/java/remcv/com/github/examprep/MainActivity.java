@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,7 +41,7 @@ import remcv.com.github.examprep.utils.Utils;
 import remcv.com.github.examprep.view.DialogNumberOfQuestions;
 import remcv.com.github.examprep.view.ExamItemAdapter;
 
-public class MainActivity extends AppCompatActivity implements TableConstants
+public class MainActivity extends AppCompatActivity implements TableConstants, DialogNumberOfQuestions.DialogNumberOfQuestionsListener
 {
     // fields - data
     private File sourceFile;
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements TableConstants
     private static final int ADD_ITEM_REQUEST_CODE = 1;
     private static final int UPDATE_DELETE_ITEM_REQUEST_CODE = 2;
     private static final int UPLOAD_TSV_REQUEST_CODE = 3;
+    public static final String SHARED_PREFS = "mySharedPrefs";
+    public static final String NUMBER_OF_SUBJECTS = "numberOfSubjects";
 
     // fields - layout
     private TextView countdown_TV;
@@ -225,8 +228,8 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         databaseHandler.loadDb(sourceFile);
         Collections.sort(databaseHandler.getList());
 
-        // set the default number of subjects
-        numberOfSubjectsToTest = 5;
+        // load the number of subjects (default value is 5)
+        numberOfSubjectsToTest = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE).getInt(NUMBER_OF_SUBJECTS, 5);
     }
 
     public void onAddItemReturn(Intent data)
@@ -332,11 +335,24 @@ public class MainActivity extends AppCompatActivity implements TableConstants
         return true;
     }
 
-    // methods - alert dialogues
+    // methods - alert dialog
     public void createAlertDialogNumberOfQuestions()
     {
         DialogNumberOfQuestions dialog = new DialogNumberOfQuestions();
         dialog.show(getSupportFragmentManager(), "DialogNumberOfQuestions");
     }
 
+    @Override
+    public void getNumber(int number)
+    {
+        numberOfSubjectsToTest = number;
+
+        // save the new value to SharedPreferences
+        SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt(NUMBER_OF_SUBJECTS, numberOfSubjectsToTest);
+        editor.apply();
+
+        Toast.makeText(MainActivity.this, "Number of subjects was changed to " + numberOfSubjectsToTest, Toast.LENGTH_LONG).show();
+    }
 }
