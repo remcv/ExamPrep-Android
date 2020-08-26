@@ -2,10 +2,9 @@ package remcv.com.github.examprep;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -14,11 +13,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.google.gson.Gson;
 
@@ -40,14 +38,16 @@ import remcv.com.github.examprep.utils.TableConstants;
 import remcv.com.github.examprep.utils.Utils;
 import remcv.com.github.examprep.view.DialogNumberOfQuestions;
 import remcv.com.github.examprep.view.ExamItemAdapter;
+import remcv.com.github.examprep.view.MyDialogDatePicker;
 
-public class MainActivity extends AppCompatActivity implements TableConstants, DialogNumberOfQuestions.DialogNumberOfQuestionsListener
+public class MainActivity extends AppCompatActivity implements TableConstants, DialogNumberOfQuestions.DialogNumberOfQuestionsListener, DatePickerDialog.OnDateSetListener
 {
     // fields - data
     private File sourceFile;
     private DatabaseCrud<ExamItem> databaseHandler;
     private ExamItemAdapter adapter;
     private int numberOfSubjectsToTest;
+    private int solvedNumberOfSubjects;
     private LocalDate examDate;
 
     // fields - static final
@@ -57,9 +57,14 @@ public class MainActivity extends AppCompatActivity implements TableConstants, D
     private static final int UPLOAD_TSV_REQUEST_CODE = 3;
     public static final String SHARED_PREFS = "mySharedPrefs";
     public static final String NUMBER_OF_SUBJECTS = "numberOfSubjects";
+    public static final String EXAM_YEAR = "examYear";
+    public static final String EXAM_MONTH = "examMonth";
+    public static final String EXAM_DAY = "examDay";
 
     // fields - layout
     private TextView countdown_TV;
+    private TextView numberOfSubjects_TV;
+    private TextView totalNumberOfSubjects_TV;
     private ListView problems_LV;
 
     // methods - lifecycle
@@ -74,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements TableConstants, D
 
         // initiate layout
         initializeLayout();
-        countdown_TV.setText(Utils.calculateDaysLeft(LocalDate.of(2020, Month.SEPTEMBER, 23)));
 
         // ListView adapter
         adapter = new ExamItemAdapter(databaseHandler.getList(), MainActivity.this);
@@ -122,6 +126,9 @@ public class MainActivity extends AppCompatActivity implements TableConstants, D
 
         Collections.sort(databaseHandler.getList());
         adapter.notifyDataSetChanged();
+
+        updateData();
+        updateUI();
     }
 
     // methods - handle events
@@ -151,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements TableConstants, D
                 onGenerateRandomListOfSubjectsClicked();
                 break;
             case R.id.settingsMenu_itemChangeExamDate:
-                // TODO onChangeExamDateClicked();
+                onChangeExamDateMenuItemClicked();
                 break;
             case R.id.settingsMenu_itemSetNoSubjectsInTest:
                 createAlertDialogNumberOfQuestions();
@@ -228,8 +235,35 @@ public class MainActivity extends AppCompatActivity implements TableConstants, D
         databaseHandler.loadDb(sourceFile);
         Collections.sort(databaseHandler.getList());
 
+        // calculate solvedNumberOfSubjects
+        solvedNumberOfSubjects = (int) databaseHandler.getList().stream()
+                .filter(ExamItem::getIsDone)
+                .count();
+
         // load the number of subjects (default value is 5)
         numberOfSubjectsToTest = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE).getInt(NUMBER_OF_SUBJECTS, 5);
+
+        // load exam date
+        int year = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE).getInt(EXAM_YEAR, 0);
+        int month = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE).getInt(EXAM_MONTH, 0);
+        int dayOfMonth = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE).getInt(EXAM_DAY, 0);
+
+        if (year == 0)
+        {
+            // default value of exam date is 30 days from the current day
+            examDate = LocalDate.now().plusDays(30);
+        }
+        else
+        {
+            examDate = LocalDate.of(year, month, dayOfMonth);
+        }
+    }
+
+    public void updateData()
+    {
+        solvedNumberOfSubjects = (int) databaseHandler.getList().stream()
+                .filter(ExamItem::getIsDone)
+                .count();
     }
 
     public void onAddItemReturn(Intent data)
@@ -312,6 +346,12 @@ public class MainActivity extends AppCompatActivity implements TableConstants, D
 
             reader.close();
             inputStream.close();
+
+            // update data and UI
+            solvedNumberOfSubjects = (int) databaseHandler.getList().stream()
+                    .filter(ExamItem::getIsDone)
+                    .count();
+            totalNumberOfSubjects_TV.setText(String.format("Subjects (%d)", databaseHandler.getList().size()));
         }
         catch (Exception e)
         {
@@ -324,7 +364,12 @@ public class MainActivity extends AppCompatActivity implements TableConstants, D
     public void initializeLayout()
     {
         countdown_TV = findViewById(R.id.countdownTextView_AM);
+        numberOfSubjects_TV = findViewById(R.id.numberOfSubjects_AM);
         problems_LV = findViewById(R.id.problemsListView_AM);
+        totalNumberOfSubjects_TV = findViewById(R.id.totalNumberOfSubjects_AM);
+
+        // put data in layout
+        updateUI();
     }
 
     @Override
@@ -335,11 +380,24 @@ public class MainActivity extends AppCompatActivity implements TableConstants, D
         return true;
     }
 
+    public void updateUI()
+    {
+        numberOfSubjects_TV.setText(String.valueOf(numberOfSubjectsToTest));
+        totalNumberOfSubjects_TV.setText(String.format("Subjects (%d solved / %d)", solvedNumberOfSubjects, databaseHandler.getList().size()));
+        countdown_TV.setText(Utils.calculateDaysLeft(examDate));
+    }
+
     // methods - alert dialog
     public void createAlertDialogNumberOfQuestions()
     {
         DialogNumberOfQuestions dialog = new DialogNumberOfQuestions();
         dialog.show(getSupportFragmentManager(), "DialogNumberOfQuestions");
+    }
+
+    public void onChangeExamDateMenuItemClicked()
+    {
+        MyDialogDatePicker dp = new MyDialogDatePicker();
+        dp.show(getSupportFragmentManager(), "MyDialogDatePicker");
     }
 
     @Override
@@ -353,6 +411,24 @@ public class MainActivity extends AppCompatActivity implements TableConstants, D
         editor.putInt(NUMBER_OF_SUBJECTS, numberOfSubjectsToTest);
         editor.apply();
 
-        Toast.makeText(MainActivity.this, "Number of subjects was changed to " + numberOfSubjectsToTest, Toast.LENGTH_LONG).show();
+        // update UI
+        numberOfSubjects_TV.setText(String.valueOf(numberOfSubjectsToTest));
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth)
+    {
+        examDate = LocalDate.of(year, month + 1, dayOfMonth);
+
+        // save new values to shared preferences
+        SharedPreferences sp = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt(EXAM_YEAR, year);
+        editor.putInt(EXAM_MONTH, month + 1);
+        editor.putInt(EXAM_DAY, dayOfMonth);
+        editor.apply();
+
+        // update UI
+        updateUI();
     }
 }

@@ -55,15 +55,15 @@ public class ExamItemAdapter extends BaseAdapter
         // initialize layout
         TextView categoryNumber_TV = oneExamItemView.findViewById(R.id.categoryNumberTextView_EI);
         TextView problem_TV = oneExamItemView.findViewById(R.id.problemTextView_EI);
-        ImageView isDoneImage = oneExamItemView.findViewById(R.id.isDoneImageView_EI);
 
         // put data in view
         ExamItem examItem = list.get(position);
         categoryNumber_TV.setText(String.valueOf(examItem.getCategoryNumber()));
         problem_TV.setText(examItem.getProblem());
+
         if (examItem.getIsDone())
         {
-            isDoneImage.setImageResource(R.drawable.check_icon);
+            categoryNumber_TV.setBackgroundResource(R.drawable.circle_subject_solved);
         }
 
         return oneExamItemView;

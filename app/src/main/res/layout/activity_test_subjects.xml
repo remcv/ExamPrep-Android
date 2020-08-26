@@ -68,30 +68,23 @@
         android:paddingRight="8dp" >
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:textAlignment="center"
             android:textColor="@android:color/primary_text_dark"
             android:textSize="16sp"
+            android:layout_marginLeft="10dp"
             android:text="No" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="10"
+            android:layout_weight="1"
             android:textAlignment="center"
             android:textSize="16sp"
             android:textColor="@android:color/primary_text_dark"
             android:text="Subject" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:textColor="@android:color/primary_text_dark" />
 
     </LinearLayout>
 

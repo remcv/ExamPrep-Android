@@ -55,6 +55,38 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.9"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/circle2"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/numberOfSubjects_AM"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="10"
+                android:textStyle="bold"
+                android:textColor="#FDD835"
+                android:textSize="25sp"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="subjects"
+                android:textSize="12sp"
+                android:textColor="@android:color/black"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
@@ -63,36 +95,30 @@
         android:orientation="horizontal"
         android:background="@color/colorPrimary"
         android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:paddingRight="8dp" >
+        android:paddingBottom="4dp" >
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:textAlignment="center"
             android:textColor="@android:color/primary_text_dark"
             android:textSize="16sp"
+            android:layout_marginLeft="10dp"
             android:text="No" />
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="10"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:textColor="@android:color/primary_text_dark"
-            android:text="Subject" />
-
-        <TextView
+            android:id="@+id/totalNumberOfSubjects_AM"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAlignment="center"
             android:textSize="16sp"
             android:textColor="@android:color/primary_text_dark"
-            android:text="S" />
+            tools:text="Subjects (61)" />
+
+
 
     </LinearLayout>
 

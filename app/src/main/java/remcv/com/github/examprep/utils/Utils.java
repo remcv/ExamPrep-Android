@@ -1,8 +1,12 @@
 package remcv.com.github.examprep.utils;
 
+import android.util.Log;
+
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.chrono.ChronoPeriod;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +22,7 @@ public class Utils
     // methods
     public static String calculateDaysLeft(LocalDate examDate)
     {
-        long daysLeft =  ChronoUnit.DAYS.between(LocalDate.now(), examDate);
+        long daysLeft = ChronoUnit.DAYS.between(LocalDate.now(), examDate);
         return String.valueOf(daysLeft);
     }
 

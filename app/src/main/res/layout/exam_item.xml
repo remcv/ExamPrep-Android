@@ -1,38 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
-    android:gravity="center">
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/categoryNumberTextView_EI"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:textAlignment="center"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
         android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="#1565C0"
         android:textSize="16sp"
-        android:textColor="@android:color/holo_orange_dark"
         android:textStyle="bold"
-        android:text="30" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="30" />
 
     <TextView
         android:id="@+id/problemTextView_EI"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="10"
-        android:textSize="16sp"
+        android:layout_marginStart="8dp"
         android:textColor="@android:color/black"
-        android:text="Diagnosticul diferential al anginelor albe acum si in vecii vecilor" />
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/categoryNumberTextView_EI"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="The clinical picture in malaria" />
 
-    <ImageView
-        android:id="@+id/isDoneImageView_EI"
-        android:layout_width="0dp"
-        android:layout_height="25dp"
-        android:layout_marginRight="4dp"
-        android:layout_weight="1" />
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
