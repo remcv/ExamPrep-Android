@@ -12,4 +12,4 @@ Randomly select a predefined number of questions from a list of questions.
 
 ### Screenshot
 
-![App screenshot](/screenshots/Screenshot_01.jpg)
+![App screenshot](/screenshots/Screenshot_03.jpg)
