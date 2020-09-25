@@ -10,6 +10,7 @@ Randomly select a predefined number of questions from a list of questions.
 - countdown of the number of days until your exam (can be modified by the user)
 - the user can check and exclude the problems already solved
 - upload your own list of questions in .tsv format (number\tsubject\tisSolved) from your Android phone
+- test yourself with a user-determined number of random questions
 
 ### Screenshot
 
